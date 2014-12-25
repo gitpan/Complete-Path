@@ -1,7 +1,7 @@
 package Complete::Path;
 
 our $DATE = '2014-12-25'; # DATE
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 
 use 5.010001;
 use strict;
@@ -170,12 +170,14 @@ sub complete_path {
                 $s =~ s/_/-/g if $map_case;
                 $exp_im_path ?
                     ($ci ? qr/\A\Q$s/i : qr/\A\Q$s/) :
-                        ($ci ? qr/\A\Q$s\E\z/i : qr/\A\Q$s\E\z/);
+                        ($ci ? qr/\A\Q$s\E(?:\Q$path_sep\E)?\z/i :
+                             qr/\A\Q$s\E(?:\Q$path_sep\E)?\z/);
             };
             #say "D:  re=$re";
             for (@$listres) {
                 #say "D:  $_";
                 my $s = $_; $s =~ s/_/-/g if $map_case;
+                #say "D: <$s> =~ $re";
                 next unless $s =~ $re;
                 my $p = $dir =~ m!\A\z|\Q$path_sep\E\z! ?
                     "$dir$_" : "$dir$path_sep$_";
@@ -234,7 +236,7 @@ Complete::Path - Complete path
 
 =head1 VERSION
 
-This document describes version 0.01 of Complete::Path (from Perl distribution Complete-Path), released on 2014-12-25.
+This document describes version 0.02 of Complete::Path (from Perl distribution Complete-Path), released on 2014-12-25.
 
 =head1 DESCRIPTION
 

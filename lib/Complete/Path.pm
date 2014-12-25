@@ -1,7 +1,7 @@
 package Complete::Path;
 
 our $DATE = '2014-12-25'; # DATE
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 use 5.010001;
 use strict;
@@ -130,8 +130,9 @@ sub complete_path {
     my $leaf = pop @intermediate_dirs;
     @intermediate_dirs = ('') if !@intermediate_dirs;
 
-    #say "D:intermediate_dirs=[",join(", ", map{"<$_>"} @intermediate_dirs),"]";
-    #say "D:leaf=<$leaf>";
+    say "D:starting_path=<$starting_path>";
+    say "D:intermediate_dirs=[",join(", ", map{"<$_>"} @intermediate_dirs),"]";
+    say "D:leaf=<$leaf>";
 
     # candidate for intermediate paths. when doing case-insensitive search,
     # there maybe multiple candidate paths for each dir, for example if
@@ -189,6 +190,14 @@ sub complete_path {
         @candidate_paths = @new_candidate_paths;
     }
 
+    my $cut_chars = 0;
+    if (length($starting_path)) {
+        $cut_chars += length($starting_path);
+        unless ($starting_path =~ /\Q$path_sep\E\z/) {
+            $cut_chars += length($path_sep);
+        }
+    }
+
     my @res;
     for my $dir (@candidate_paths) {
         #say "D:opendir($dir)";
@@ -208,8 +217,7 @@ sub complete_path {
             next if $filter_func && !$filter_func->($p);
 
             # process into final result
-            substr($p, 0, length($starting_path)+length($path_sep))=''
-                if length($starting_path);
+            substr($p, 0, $cut_chars) = '' if $cut_chars;
             $p = "$result_prefix$p" if length($result_prefix);
             unless ($p =~ /\Q$path_sep\E\z/) {
                 $p .= $path_sep if $is_dir_func->($p);
@@ -236,7 +244,7 @@ Complete::Path - Complete path
 
 =head1 VERSION
 
-This document describes version 0.02 of Complete::Path (from Perl distribution Complete-Path), released on 2014-12-25.
+This document describes version 0.03 of Complete::Path (from Perl distribution Complete-Path), released on 2014-12-25.
 
 =head1 DESCRIPTION
 

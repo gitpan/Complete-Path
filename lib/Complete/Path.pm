@@ -1,7 +1,7 @@
 package Complete::Path;
 
 our $DATE = '2014-12-25'; # DATE
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
 
 use 5.010001;
 use strict;
@@ -27,9 +27,9 @@ functions like `Complete::Util::complete_file` or
 `Complete::Module::complete_module`. Provides features like case-insensitive
 matching, expanding intermediate paths, and case mapping.
 
-Algorithm is to split path into path elements, listing (using the supplied
-`list_func`) and perform filtering (using the supplied `filter_func`) at every
-level.
+Algorithm is to split path into path elements, then list items (using the
+supplied `list_func`) and perform filtering (using the supplied `filter_func`)
+at every level.
 
 _
     args => {
@@ -44,15 +44,29 @@ _
             description => <<'_',
 
 Code will be called with arguments: ($path, $cur_path_elem, $is_intermediate).
-
-Code should return an arrayref containing list of elements.
+Code should return an arrayref containing list of elements. "Directories" can be
+marked by ending the name with the path separator (see `path_sep`). Or, you can
+also provide an `is_dir_func` function that will be consulted after filtering.
+If an item is a "directory" then its name will be suffixed with a path
+separator by `complete_path()`.
 
 _
         },
         is_dir_func => {
             summary => 'Function to check whether a path is a "dir"',
             schema  => 'code*',
-            req     => 1,
+            description => <<'_',
+
+Optional. You can provide this function to determine if an item is a "directory"
+(so its name can be suffixed with path separator). You do not need to do this if
+you already suffix names of "directories" with path separator in `list_func`.
+
+One reason you might want to provide this and not mark "directories" in
+`list_func` is when you want to do extra filtering with `filter_func`. Sometimes
+you do not want to suffix the names first (example: see `complete_file` in
+`Complete::Util`).
+
+_
         },
         starting_path => {
             schema => 'str*',
@@ -61,6 +75,12 @@ _
         },
         filter_func => {
             schema  => 'code*',
+            description => <<'_',
+
+Provide extra filtering. Code will be given path and should return 1 if the item
+should be included in the final result or 0 if the item should be excluded.
+
+_
         },
 
         path_sep => {
@@ -244,7 +264,7 @@ Complete::Path - Complete path
 
 =head1 VERSION
 
-This document describes version 0.04 of Complete::Path (from Perl distribution Complete-Path), released on 2014-12-25.
+This document describes version 0.05 of Complete::Path (from Perl distribution Complete-Path), released on 2014-12-25.
 
 =head1 DESCRIPTION
 
@@ -260,9 +280,9 @@ functions like C<Complete::Util::complete_file> or
 C<Complete::Module::complete_module>. Provides features like case-insensitive
 matching, expanding intermediate paths, and case mapping.
 
-Algorithm is to split path into path elements, listing (using the supplied
-C<list_func>) and perform filtering (using the supplied C<filter_func>) at every
-level.
+Algorithm is to split path into path elements, then list items (using the
+supplied C<list_func>) and perform filtering (using the supplied C<filter_func>)
+at every level.
 
 Arguments ('*' denotes required arguments):
 
@@ -281,17 +301,32 @@ This option mimics feature in zsh where when you type something like C<cd
 
 =item * B<filter_func> => I<code>
 
-=item * B<is_dir_func>* => I<code>
+Provide extra filtering. Code will be given path and should return 1 if the item
+should be included in the final result or 0 if the item should be excluded.
+
+=item * B<is_dir_func> => I<code>
 
 Function to check whether a path is a "dir".
+
+Optional. You can provide this function to determine if an item is a "directory"
+(so its name can be suffixed with path separator). You do not need to do this if
+you already suffix names of "directories" with path separator in C<list_func>.
+
+One reason you might want to provide this and not mark "directories" in
+C<list_func> is when you want to do extra filtering with C<filter_func>. Sometimes
+you do not want to suffix the names first (example: see C<complete_file> in
+C<Complete::Util>).
 
 =item * B<list_func>* => I<code>
 
 Function to list the content of intermediate "dirs".
 
 Code will be called with arguments: ($path, $cur_path_elem, $is_intermediate).
-
-Code should return an arrayref containing list of elements.
+Code should return an arrayref containing list of elements. "Directories" can be
+marked by ending the name with the path separator (see C<path_sep>). Or, you can
+also provide an C<is_dir_func> function that will be consulted after filtering.
+If an item is a "directory" then its name will be suffixed with a path
+separator by C<complete_path()>.
 
 =item * B<map_case> => I<bool>
 

@@ -18,14 +18,14 @@ meta-spec:
   version: '1.4'
 name: Complete-Path
 requires:
-  Complete: '0.06'
+  Complete: '0.10'
   Rinci: v1.1.0
   perl: '5.010001'
 resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Complete-Path
   homepage: https://metacpan.org/release/Complete-Path
   repository: git://github.com/perlancar/perl-Complete-Path.git
-version: '0.05'
+version: '0.06'
 x_Dist_Zilla:
   perl:
     version: '5.018001'
@@ -189,7 +189,7 @@ x_Dist_Zilla:
             -
               class: Pod::Weaver::Plugin::Rinci
               name: '@Author::PERLANCAR/Rinci'
-              version: '0.25'
+              version: '0.26'
             -
               class: Pod::Weaver::Section::Leftovers
               name: '@Author::PERLANCAR/Leftovers'

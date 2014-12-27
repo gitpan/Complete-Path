@@ -30,7 +30,7 @@
       },
       "runtime" : {
          "requires" : {
-            "Complete" : "0.06",
+            "Complete" : "0.10",
             "Rinci" : "v1.1.0",
             "perl" : "5.010001"
          }
@@ -56,7 +56,7 @@
          "web" : "https://github.com/perlancar/perl-Complete-Path"
       }
    },
-   "version" : "0.05",
+   "version" : "0.06",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"
@@ -260,7 +260,7 @@
                      {
                         "class" : "Pod::Weaver::Plugin::Rinci",
                         "name" : "@Author::PERLANCAR/Rinci",
-                        "version" : "0.25"
+                        "version" : "0.26"
                      },
                      {
                         "class" : "Pod::Weaver::Section::Leftovers",

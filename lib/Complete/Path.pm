@@ -1,7 +1,7 @@
 package Complete::Path;
 
-our $DATE = '2014-12-25'; # DATE
-our $VERSION = '0.05'; # VERSION
+our $DATE = '2014-12-27'; # DATE
+our $VERSION = '0.06'; # VERSION
 
 use 5.010001;
 use strict;
@@ -137,6 +137,8 @@ sub complete_path {
     my $result_prefix = $args{result_prefix};
     my $starting_path = $args{starting_path} // '';
 
+    my $exp_im_path_max_len = $Complete::OPT_EXP_IM_PATH_MAX_LEN;
+
     # split word by into path elements, as we want to dig level by level (needed
     # when doing case-insensitive search on a case-sensitive tree).
     my @intermediate_dirs;
@@ -189,7 +191,7 @@ sub complete_path {
             my $re = do {
                 my $s = $intdir;
                 $s =~ s/_/-/g if $map_case;
-                $exp_im_path ?
+                $exp_im_path && length($s) <= $exp_im_path_max_len ?
                     ($ci ? qr/\A\Q$s/i : qr/\A\Q$s/) :
                         ($ci ? qr/\A\Q$s\E(?:\Q$path_sep\E)?\z/i :
                              qr/\A\Q$s\E(?:\Q$path_sep\E)?\z/);
@@ -264,7 +266,7 @@ Complete::Path - Complete path
 
 =head1 VERSION
 
-This document describes version 0.05 of Complete::Path (from Perl distribution Complete-Path), released on 2014-12-25.
+This document describes version 0.06 of Complete::Path (from Perl distribution Complete-Path), released on 2014-12-27.
 
 =head1 DESCRIPTION
 

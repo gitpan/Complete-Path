@@ -1,7 +1,7 @@
 package Complete::Path;
 
-our $DATE = '2015-01-02'; # DATE
-our $VERSION = '0.07'; # VERSION
+our $DATE = '2015-01-07'; # DATE
+our $VERSION = '0.08'; # VERSION
 
 use 5.010001;
 use strict;
@@ -236,14 +236,21 @@ sub complete_path {
             next unless $s =~ $re;
             my $p = $dir =~ m!\A\z|\Q$path_sep\E\z! ?
                 "$dir$_" : "$dir$path_sep$_";
-            next if $filter_func && !$filter_func->($p);
+            #say "D:dir=<$dir>, \$_=<$_>, p=<$p>";
+            {
+                local $_ = $p; # convenience for filter func
+                next if $filter_func && !$filter_func->($p);
+            }
 
             # process into final result
             my $p0 = $p;
             substr($p, 0, $cut_chars) = '' if $cut_chars;
             $p = "$result_prefix$p" if length($result_prefix);
             unless ($p =~ /\Q$path_sep\E\z/) {
-                $p .= $path_sep if $is_dir_func->($p0);
+                {
+                    local $_ = $p0; # convenience for filter func
+                    $p .= $path_sep if $is_dir_func->($p0);
+                }
             }
 
             push @res, $p;
@@ -267,7 +274,7 @@ Complete::Path - Complete path
 
 =head1 VERSION
 
-This document describes version 0.07 of Complete::Path (from Perl distribution Complete-Path), released on 2015-01-02.
+This document describes version 0.08 of Complete::Path (from Perl distribution Complete-Path), released on 2015-01-07.
 
 =head1 DESCRIPTION
 
@@ -276,8 +283,9 @@ This document describes version 0.07 of Complete::Path (from Perl distribution C
 
 =head2 complete_path(%args) -> array
 
-Complete path.
+{en_US Complete path}.
 
+{en_US 
 Complete path, for anything path-like. Meant to be used as backend for other
 functions like C<Complete::Util::complete_file> or
 C<Complete::Module::complete_module>. Provides features like case-insensitive
@@ -286,6 +294,7 @@ matching, expanding intermediate paths, and case mapping.
 Algorithm is to split path into path elements, then list items (using the
 supplied C<list_func>) and perform filtering (using the supplied C<filter_func>)
 at every level.
+}
 
 Arguments ('*' denotes required arguments):
 
@@ -293,24 +302,29 @@ Arguments ('*' denotes required arguments):
 
 =item * B<ci> => I<bool>
 
-Case-insensitive matching.
+{en_US Case-insensitive matching}.
 
 =item * B<exp_im_path> => I<bool>
 
-Expand intermediate paths.
+{en_US Expand intermediate paths}.
 
+{en_US 
 This option mimics feature in zsh where when you type something like C<cd
 /h/u/b/myscript> and get C<cd /home/ujang/bin/myscript> as a completion answer.
+}
 
 =item * B<filter_func> => I<code>
 
+{en_US 
 Provide extra filtering. Code will be given path and should return 1 if the item
 should be included in the final result or 0 if the item should be excluded.
+}
 
 =item * B<is_dir_func> => I<code>
 
-Function to check whether a path is a "dir".
+{en_US Function to check whether a path is a "dir"}.
 
+{en_US 
 Optional. You can provide this function to determine if an item is a "directory"
 (so its name can be suffixed with path separator). You do not need to do this if
 you already suffix names of "directories" with path separator in C<list_func>.
@@ -319,27 +333,32 @@ One reason you might want to provide this and not mark "directories" in
 C<list_func> is when you want to do extra filtering with C<filter_func>. Sometimes
 you do not want to suffix the names first (example: see C<complete_file> in
 C<Complete::Util>).
+}
 
 =item * B<list_func>* => I<code>
 
-Function to list the content of intermediate "dirs".
+{en_US Function to list the content of intermediate "dirs"}.
 
+{en_US 
 Code will be called with arguments: ($path, $cur_path_elem, $is_intermediate).
 Code should return an arrayref containing list of elements. "Directories" can be
 marked by ending the name with the path separator (see C<path_sep>). Or, you can
 also provide an C<is_dir_func> function that will be consulted after filtering.
 If an item is a "directory" then its name will be suffixed with a path
 separator by C<complete_path()>.
+}
 
 =item * B<map_case> => I<bool>
 
-Treat _ (underscore) and - (dash) as the same.
+{en_US Treat _ (underscore) and - (dash) as the same}.
 
+{en_US 
 This is another convenience option like C<ci>, where you can type C<-> (without
 pressing Shift, at least in US keyboard) and can still complete C<_> (underscore,
 which is typed by pressing Shift, at least in US keyboard).
 
 This option mimics similar option in bash/readline: C<completion-map-case>.
+}
 
 =item * B<path_sep> => I<str> (default: "/")
 
@@ -350,10 +369,6 @@ This option mimics similar option in bash/readline: C<completion-map-case>.
 =back
 
 Return value:  (array)
-=head1 TODO
-
-Recursive matching, e.g. **/Util to match: List/Util, CHI/Util,
-Class/Factory/Util, and so on
 
 =head1 SEE ALSO
 

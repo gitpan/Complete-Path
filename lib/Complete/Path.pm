@@ -1,7 +1,7 @@
 package Complete::Path;
 
-our $DATE = '2015-01-07'; # DATE
-our $VERSION = '0.08'; # VERSION
+our $DATE = '2015-01-08'; # DATE
+our $VERSION = '0.09'; # VERSION
 
 use 5.010001;
 use strict;
@@ -231,6 +231,7 @@ sub complete_path {
             $ci ? qr/\A\Q$s/i : qr/\A\Q$s/;
         };
         #say "D:re=$re";
+      L1:
         for (@$listres) {
             my $s = $_; $s =~ s/_/-/g if $map_case;
             next unless $s =~ $re;
@@ -239,7 +240,7 @@ sub complete_path {
             #say "D:dir=<$dir>, \$_=<$_>, p=<$p>";
             {
                 local $_ = $p; # convenience for filter func
-                next if $filter_func && !$filter_func->($p);
+                next L1 if $filter_func && !$filter_func->($p);
             }
 
             # process into final result
@@ -274,7 +275,7 @@ Complete::Path - Complete path
 
 =head1 VERSION
 
-This document describes version 0.08 of Complete::Path (from Perl distribution Complete-Path), released on 2015-01-07.
+This document describes version 0.09 of Complete::Path (from Perl distribution Complete-Path), released on 2015-01-08.
 
 =head1 DESCRIPTION
 
